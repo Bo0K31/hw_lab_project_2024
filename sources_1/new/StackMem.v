@@ -44,6 +44,9 @@ module StackMem(
         if(we) begin
             mem[in_address] <= in_data;
         end
+    end
+    
+    always@(out_address) begin
         out_data <= mem[out_address];
     end
     

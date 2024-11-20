@@ -20,7 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module Loader(
+    module Loader(
     out_data,
     out_address,
     load_enable,
@@ -33,10 +33,10 @@ module Loader(
     finish,
     clock
     );
-    parameter CHAR_ID_WIDTH = 999;
+    parameter CHAR_ID_WIDTH = 256;
     
     parameter DATA_WIDTH = 12;
-    parameter ADDR_WIDTH = 999;
+    parameter ADDR_WIDTH = 8;
     
     parameter X_WIDTH = 5;
     parameter Y_WIDTH = 5;
