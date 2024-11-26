@@ -21,56 +21,43 @@
 
 
 module System(
-    output wire vgaRed[15:0],
-    output wire vgaGreen[15:0],
-    output wire vgaBlue[15:0],
+    output reg [3:0] vgaRed,
+    output reg [3:0] vgaGreen,
+    output reg [3:0] vgaBlue,
     output wire Hsync,
     output wire Vsync,
-    input wire clock
+    input wire clk
     );
     
-    parameter VGA_X_WIDTH = 10;
-    parameter VGA_Y_WIDTH = 10;
-    parameter CHAR_X_WIDTH = 5;
-    parameter CHAR_Y_WIDTH = 6;
-    parameter CHAR_WIDTH = CHAR_Y_WIDTH + CHAR_X_WIDTH;
+    localparam ROW_NUMBER = 16; // number of lines
+    localparam COL_NUMBER = 32; // number of character in each line
+    localparam CHAR_ID_LENGTH = 8; // lenght of the character id
     
-    wire reset = 0;
+    localparam ROW_BIT_LEN = 4; // bit len of row(set this to upper(log_2(ROW_NUMBER)))
+    localparam COL_BIT_LEN = 5; // bit len of col(set this to upper(log_2(COL_NUMBER))
+    
+    localparam PIXEL_BIT_LEN = 12; // this is fixed for {red,green,blue}
+    
+    wire x;
+    wire y;
     wire video_on;
     wire p_tick;
+    wire [CHAR_ID_LENGTH - 1:0] show_chacracter_id;
+    wire [ROW_BIT_LEN - 1:0] show_row;
+    wire [COL_BIT_LEN - 1:0] show_col;
+    wire [3:0] red;
+    wire [3:0] green;
+    wire [3:0] blue;
     
-    reg [VGA_X_WIDTH-1:0] x_vga_draw;
-    reg [VGA_Y_WIDTH-1:0] y_reg_draw;
-    reg [12:0]pixel;
-    wire [12:0]stencil_data;
-    wire [CHAR_WIDTH-1:0]stencil_address;
-    wire [12:0]load_data;
-    wire [CHAR_WIDTH-1:0]load_address;
-    wire draw;
-    wire load;
-    wire draw_finish;
-    wire load_finish;
-    wire [VGA_X_WIDTH-1:0] x_stencil;
-    wire [VGA_Y_WIDTH-1:0] y_stencil;
-    wire stack_empty;
-    wire pop;
-    // put bit length later
-    wire load_character_id;
-    wire load_x;
-    wire load_y;
+    VGASync vga_sync(clk,0,Hsync,Vsync,video_on,p_tick,x,y);
+    CharacterPlane characerPlane(show_chacracter_id,show_row,show_col,0,0,0,1,clk);
+    PixelEncoder pixelEncoder(x,y,show_row,show_col,show_chacracter_id,red,green,blue,video_on);
     
-    
-    // put bit length later
-    reg character_id;
-    reg x;
-    reg y;
-    reg push;
-    
-    VGASync vga_sync(clock,reset,Hsync,Vsync,video_on,p_tick,x_vga_draw,y_vga_draw);
-    Buffer screen_buffer(pixel,{y_vga_draw,x_vga_draw},stencil_data,stencil_address,draw,clock);
-    Stencil stencil(stencil_data,stencil_address,load_data,load_address,draw,draw_finish,x_stencil,y_stencil,clock);
-    Loader loader(stencil_data,stencil_address,draw,x_stencil,y_stencil,load_character_id,load_x,load_y,load,load_finish,clock);
-    StackBuffer stack_buffer(push,character_id,x,y,pop,load_character_id,load_x,load_y,stack_empty,clock);
-    Feeder feeder(pop,stack_empty,load,load_finish,draw_finish,clock);
-    
+    always@(x or y) begin
+        if(video_on) begin
+            vgaRed <= red;
+            vgaGreen <= green;
+            vgaBlue <= blue;
+        end
+    end
 endmodule
