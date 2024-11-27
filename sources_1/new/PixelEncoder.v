@@ -80,8 +80,8 @@ module PixelEncoder(
     
     assign scale_x = x / ZOOM_FACTER;
     assign scale_y = y / ZOOM_FACTER;
-    assign x_on_character = scale_x % (TOTAL_CHAR_WIDTH);
-    assign y_on_character = scale_y % (TOTAL_CHAR_HEIGHT);
+    assign x_on_character = scale_x % TOTAL_CHAR_WIDTH;
+    assign y_on_character = scale_y % TOTAL_CHAR_HEIGHT;
     assign rom_address = {{(ROW_ADDR_BIT_LEN - CHAR_ID_LENGTH){1'b0}},character_id} * CHAR_PIXELS + 
         (y_on_character - CHAR_TOP_PAD) * CHAR_WIDTH +
         (x_on_character - CHAR_LEFT_PAD);
@@ -92,15 +92,20 @@ module PixelEncoder(
         $readmemb("rom.mem", mem);
     end
     
-    always @(x or y) begin
+    always @(scale_x, scale_y) begin
+        char_row = scale_y / TOTAL_CHAR_HEIGHT;
+        char_col = scale_x / TOTAL_CHAR_WIDTH;    
+    end
+    
+    always @(x_on_character, y_on_character, rom_address) begin
         if(e) begin
-            if(x_on_character >= CHAR_LEFT_PAD && x_on_character < CHAR_LEFT_PAD + CHAR_WIDTH) begin
-                if(y_on_character >= CHAR_TOP_PAD && y_on_character < CHAR_TOP_PAD + CHAR_HEIGHT) begin
-                    {red,green,blue} = mem[rom_address];
-                end
+            if(x_on_character >= CHAR_LEFT_PAD && x_on_character < (CHAR_LEFT_PAD + CHAR_WIDTH) &&
+            y_on_character >= CHAR_TOP_PAD && y_on_character < (CHAR_TOP_PAD + CHAR_HEIGHT) &&
+            scale_y / TOTAL_CHAR_HEIGHT < ROW_NUMBER && scale_x / TOTAL_CHAR_WIDTH < COL_NUMBER) begin
+                {red,green,blue} = mem[rom_address];
             end
             else begin
-                {red,green,blue} = 12'b000000000000; // background
+                {red,green,blue} = 12'b000000001111; // background
             end
         end
     end

@@ -50,7 +50,10 @@ module CharacterPlane(
     input wire we;
     input wire clock;
     
-    reg [DATA_SIZE - 1:0] mem [MEM_SIZE - 1:0];
+    (*rom_style = "block" *) reg [DATA_SIZE - 1:0] mem [MEM_SIZE - 1:0];
+    initial begin
+        $readmemb("char_id_test.mem", mem);
+    end
     
     always@(row_out or column_out) begin
         data_out <= mem[{{COL_BIT_LEN{1'b0}},row_out} * COL_NUMBER + column_out];

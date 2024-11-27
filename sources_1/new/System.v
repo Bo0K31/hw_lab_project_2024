@@ -38,8 +38,11 @@ module System(
     
     localparam PIXEL_BIT_LEN = 12; // this is fixed for {red,green,blue}
     
-    wire x;
-    wire y;
+    localparam X_BIT_LEN = 10; // this is from vga
+    localparam Y_BIT_LEN = 10; // this is from vga 
+    
+    wire [X_BIT_LEN - 1:0] x;
+    wire [Y_BIT_LEN - 1:0] y;
     wire video_on;
     wire p_tick;
     wire [CHAR_ID_LENGTH - 1:0] show_chacracter_id;
@@ -50,14 +53,21 @@ module System(
     wire [3:0] blue;
     
     VGASync vga_sync(clk,0,Hsync,Vsync,video_on,p_tick,x,y);
-    CharacterPlane characerPlane(show_chacracter_id,show_row,show_col,0,0,0,1,clk);
+    CharacterPlane characerPlane(show_chacracter_id,show_row,show_col,0,0,0,0,clk);
     PixelEncoder pixelEncoder(x,y,show_row,show_col,show_chacracter_id,red,green,blue,video_on);
     
-    always@(x or y) begin
-        if(video_on) begin
-            vgaRed <= red;
-            vgaGreen <= green;
-            vgaBlue <= blue;
+    always@(posedge clk) begin
+        if (p_tick == 1) begin
+            if(video_on) begin
+                vgaRed <= red;
+                vgaGreen <= green;
+                vgaBlue <= blue;
+            end
+            else begin
+                vgaRed <= 0;
+                vgaGreen <= 0;
+                vgaBlue <= 0;
+            end
         end
     end
 endmodule
