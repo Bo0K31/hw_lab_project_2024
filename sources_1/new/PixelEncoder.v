@@ -32,17 +32,17 @@ module PixelEncoder(
     e
     );
     
-    localparam CHAR_HEIGHT = 20; // height of the character
-    localparam CHAR_WIDTH = 10; // width of the cahracter
-    localparam CHAR_LEFT_PAD = 5; // space on the left side of the character
-    localparam CHAR_RIGHT_PAD = 5; // space on the right side of the character
-    localparam CHAR_TOP_PAD = 5; // space on the top side of the character
-    localparam CHAR_BOTTOM_PAD = 5; // space at the bottom side of the character
+    localparam CHAR_HEIGHT = 32; // height of the character
+    localparam CHAR_WIDTH = 16; // width of the cahracter
+    localparam CHAR_LEFT_PAD = 0; // space on the left side of the character
+    localparam CHAR_RIGHT_PAD = 0; // space on the right side of the character
+    localparam CHAR_TOP_PAD = 0; // space on the top side of the character
+    localparam CHAR_BOTTOM_PAD = 0; // space at the bottom side of the character
     
-    localparam ROW_NUMBER = 16; // number of lines
-    localparam COL_NUMBER = 32; // number of character in each line
+    localparam ROW_NUMBER = 15; // number of lines
+    localparam COL_NUMBER = 40; // number of character in each line
     localparam ROW_BIT_LEN = 4; // bit len of row(set this to upper(log_2(ROW_NUMBER)))
-    localparam COL_BIT_LEN = 5; // bit len of col(set this to upper(log_2(COL_NUMBER))
+    localparam COL_BIT_LEN = 6; // bit len of col(set this to upper(log_2(COL_NUMBER))
     
     localparam PIXEL_BIT_LEN = 12; // this is fixed for {red,green,blue}
     

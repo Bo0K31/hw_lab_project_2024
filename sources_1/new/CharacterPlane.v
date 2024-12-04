@@ -31,12 +31,12 @@ module CharacterPlane(
     clock
     );
     
-    localparam ROW_NUMBER = 16; // number of lines
-    localparam COL_NUMBER = 32; // number of character in each line
+    localparam ROW_NUMBER = 15; // number of lines
+    localparam COL_NUMBER = 40; // number of character in each line
     localparam CHAR_ID_LENGTH = 8; // lenght of the character id
     
     localparam ROW_BIT_LEN = 4; // bit len of row(set this to upper(log_2(ROW_NUMBER)))
-    localparam COL_BIT_LEN = 5; // bit len of col(set this to upper(log_2(COL_NUMBER))
+    localparam COL_BIT_LEN = 6; // bit len of col(set this to upper(log_2(COL_NUMBER))
     
     localparam MEM_SIZE = ROW_NUMBER * COL_NUMBER;
     localparam DATA_SIZE = CHAR_ID_LENGTH;
