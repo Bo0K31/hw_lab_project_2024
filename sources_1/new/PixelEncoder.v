@@ -36,7 +36,7 @@ module PixelEncoder(
     localparam CHAR_WIDTH = 16; // width of the cahracter
     localparam CHAR_LEFT_PAD = 0; // space on the left side of the character
     localparam CHAR_RIGHT_PAD = 0; // space on the right side of the character
-    localparam CHAR_TOP_PAD = 1; // space on the top side of the character
+    localparam CHAR_TOP_PAD = 0; // space on the top side of the character
     localparam CHAR_BOTTOM_PAD = 0; // space at the bottom side of the character
     
     localparam ROW_NUMBER = 15; // number of lines
