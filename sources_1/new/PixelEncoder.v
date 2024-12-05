@@ -32,6 +32,14 @@ module PixelEncoder(
     e
     );
     
+    localparam H_DISPLAY = 640;
+    localparam V_DISPLAY = 480;
+    
+    localparam LEFT_PAD = 0;
+    localparam RIGHT_PAD = 0;
+    localparam TOP_PAD = 0;
+    localparam BOTTOM_PAD = 0;
+    
     localparam CHAR_HEIGHT = 32; // height of the character
     localparam CHAR_WIDTH = 16; // width of the cahracter
     localparam CHAR_LEFT_PAD = 0; // space on the left side of the character
@@ -74,14 +82,18 @@ module PixelEncoder(
     
     wire [ROW_ADDR_BIT_LEN - 1:0] scale_x;
     wire [ROW_ADDR_BIT_LEN - 1:0] scale_y;
+    wire [ROW_ADDR_BIT_LEN - 1:0] shift_x;
+    wire [ROW_ADDR_BIT_LEN - 1:0] shift_y;
     wire [ROW_ADDR_BIT_LEN - 1:0] x_on_character; // x position on the character
     wire [ROW_ADDR_BIT_LEN - 1:0] y_on_character; // y position on the character
     wire [ROW_ADDR_BIT_LEN - 1:0] rom_address;
     
     assign scale_x = x / ZOOM_FACTER;
     assign scale_y = y / ZOOM_FACTER;
-    assign x_on_character = scale_x % TOTAL_CHAR_WIDTH;
-    assign y_on_character = scale_y % TOTAL_CHAR_HEIGHT;
+    assign shift_x = scale_x - LEFT_PAD;
+    assign shift_y = scale_y - TOP_PAD;
+    assign x_on_character = shift_x % TOTAL_CHAR_WIDTH;
+    assign y_on_character = shift_y % TOTAL_CHAR_HEIGHT;
     assign rom_address = {{(ROW_ADDR_BIT_LEN - CHAR_ID_LENGTH){1'b0}},character_id} * CHAR_PIXELS + 
         (y_on_character - CHAR_TOP_PAD) * CHAR_WIDTH +
         (x_on_character - CHAR_LEFT_PAD);
@@ -91,16 +103,18 @@ module PixelEncoder(
         $readmemb("rom.mem", mem);
     end
     
-    always @(scale_x, scale_y) begin
-        char_row = scale_y / TOTAL_CHAR_HEIGHT;
-        char_col = scale_x / TOTAL_CHAR_WIDTH;    
+    always @(shift_x, shift_y) begin
+        char_row = shift_y / TOTAL_CHAR_HEIGHT;
+        char_col = shift_x / TOTAL_CHAR_WIDTH;    
     end
     
     always @(x_on_character, y_on_character, rom_address) begin
         if(e) begin
             if(x_on_character >= CHAR_LEFT_PAD && x_on_character < (CHAR_LEFT_PAD + CHAR_WIDTH) &&
             y_on_character >= CHAR_TOP_PAD && y_on_character < (CHAR_TOP_PAD + CHAR_HEIGHT) &&
-            scale_y / TOTAL_CHAR_HEIGHT < ROW_NUMBER && scale_x / TOTAL_CHAR_WIDTH < COL_NUMBER) begin
+            shift_y / TOTAL_CHAR_HEIGHT < ROW_NUMBER && shift_x / TOTAL_CHAR_WIDTH < COL_NUMBER &&
+            scale_x >= LEFT_PAD && scale_x <= H_DISPLAY / ZOOM_FACTER - RIGHT_PAD &&
+            scale_y >= TOP_PAD && scale_y <= V_DISPLAY / ZOOM_FACTER - BOTTOM_PAD) begin
                 {red,green,blue} = mem[rom_address];
             end
             else begin
