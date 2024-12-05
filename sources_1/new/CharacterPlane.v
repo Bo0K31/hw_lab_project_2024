@@ -71,7 +71,7 @@ module CharacterPlane(
     generate 
         for(r1=0;r1<ROW_NUMBER;r1=r1+1) begin
             for (c1=0;c1<COL_NUMBER;c1=c1+1) begin
-                always@(posedge clock) begin
+                always@(negedge clock) begin
                     if(reset == 1) begin
                         mem[{{COL_BIT_LEN{1'b0}},r1} * COL_NUMBER + c1] <= 0;
                     end;
@@ -83,7 +83,7 @@ module CharacterPlane(
     generate 
         for(r=1;r<ROW_NUMBER;r=r+1) begin
             for (c=0;c<COL_NUMBER;c=c+1) begin
-                always@(posedge clock) begin
+                always@(negedge clock) begin
                     if(we == 1 && push_up == 1) begin
                         mem[{{COL_BIT_LEN{1'b0}},r - 1} * COL_NUMBER + c] <= mem[{{COL_BIT_LEN{1'b0}},r} * COL_NUMBER + c];
                     end
@@ -93,7 +93,7 @@ module CharacterPlane(
     endgenerate
     generate 
         for (c=1;c<COL_NUMBER;c=c+1) begin
-            always@(posedge clock) begin
+            always@(negedge clock) begin
                 if(we == 1 && push_up == 1) begin
                     mem[{{COL_BIT_LEN{1'b0}},ROW_NUMBER - 1} * COL_NUMBER + c] <= 0;
                 end
@@ -105,7 +105,7 @@ module CharacterPlane(
         data_out <= mem[{{COL_BIT_LEN{1'b0}},row_out} * COL_NUMBER + column_out];
     end
     
-    always@(posedge clock) begin
+    always@(negedge clock) begin
        if(we == 1 && reset == 0) begin
             mem[{{COL_BIT_LEN{1'b0}},row_in} * COL_NUMBER + column_in] <= data_in;
        end
