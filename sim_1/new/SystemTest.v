@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 27.11.2024 09:22:49
+// Create Date: 05.12.2024 06:30:36
 // Design Name: 
-// Module Name: PixelEncoderTest
+// Module Name: SystemTest
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -20,19 +20,37 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module PixelEncoderTest(
+module SystemTest(
 
     );
     
-    reg [9:0] x;
-    reg [9:0] y;
-    wire [3:0] char_row;
-    wire [5:0] char_column;
-    wire [3:0] red,green,blue;
+    localparam ROW_NUMBER = 15; // number of lines
+    localparam COL_NUMBER = 40; // number of character in each line
+    localparam CHAR_ID_LENGTH = 8; // lenght of the character id
     
-    PixelEncoder pixelEncoder(x,y,char_row,char_column,6,red,green,blue,1);
+    localparam ROW_BIT_LEN = 4; // bit len of row(set this to upper(log_2(ROW_NUMBER)))
+    localparam COL_BIT_LEN = 6; // bit len of col(set this to upper(log_2(COL_NUMBER))
     
-    initial begin
+    localparam PIXEL_BIT_LEN = 12; // this is fixed for {red,green,blue}
+    
+    localparam X_BIT_LEN = 10; // this is from vga
+    localparam Y_BIT_LEN = 10; // this is from vga 
+    
+    reg [X_BIT_LEN - 1:0] x;
+    reg [Y_BIT_LEN - 1:0] y;
+    wire video_on;
+    wire p_tick;
+    wire [CHAR_ID_LENGTH - 1:0] show_chacracter_id;
+    wire [ROW_BIT_LEN - 1:0] show_row;
+    wire [COL_BIT_LEN - 1:0] show_col;
+    wire [3:0] red;
+    wire [3:0] green;
+    wire [3:0] blue;
+ 
+    CharacterPlane characerPlane(show_chacracter_id,show_row,show_col,0,0,0,0,0);
+    PixelEncoder pixelEncoder(x,y,show_row,show_col,show_chacracter_id,red,green,blue,1);
+    
+     initial begin
         #1; x = 0; y = 0;
 #1; x = 16; y = 0;
 #1; x = 32; y = 0;
@@ -636,5 +654,4 @@ module PixelEncoderTest(
 
         #10; $finish;
     end
-    
 endmodule

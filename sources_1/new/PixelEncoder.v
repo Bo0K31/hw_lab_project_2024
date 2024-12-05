@@ -36,7 +36,7 @@ module PixelEncoder(
     localparam CHAR_WIDTH = 16; // width of the cahracter
     localparam CHAR_LEFT_PAD = 0; // space on the left side of the character
     localparam CHAR_RIGHT_PAD = 0; // space on the right side of the character
-    localparam CHAR_TOP_PAD = 0; // space on the top side of the character
+    localparam CHAR_TOP_PAD = 1; // space on the top side of the character
     localparam CHAR_BOTTOM_PAD = 0; // space at the bottom side of the character
     
     localparam ROW_NUMBER = 15; // number of lines
@@ -60,7 +60,7 @@ module PixelEncoder(
     localparam CHAR_PIXELS = CHAR_HEIGHT * CHAR_WIDTH;
     
     localparam ROM_SIZE = TOTAL_CHAR * CHAR_PIXELS;
-    localparam ROW_ADDR_BIT_LEN = 15; // set this number to cover ROW_SIZE(upper(log_2(ROW_SIZE)))
+    localparam ROW_ADDR_BIT_LEN = 17; // set this number to cover ROW_SIZE(upper(log_2(ROW_SIZE)))
     
     input wire [X_BIT_LEN - 1:0] x;
     input wire [Y_BIT_LEN - 1:0] y;
@@ -86,7 +86,10 @@ module PixelEncoder(
         (y_on_character - CHAR_TOP_PAD) * CHAR_WIDTH +
         (x_on_character - CHAR_LEFT_PAD);
     
-    reg [PIXEL_BIT_LEN - 1:0] mem [ROM_SIZE - 1:0];
+    (*rom_style = "block" *) reg [PIXEL_BIT_LEN - 1:0] mem [ROM_SIZE - 1:0];
+    initial begin
+        $readmemb("rom.mem", mem);
+    end
     
     always @(scale_x, scale_y) begin
         char_row = scale_y / TOTAL_CHAR_HEIGHT;
