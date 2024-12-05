@@ -26,6 +26,8 @@ module System(
     output reg [3:0] vgaBlue,
     output wire Hsync,
     output wire Vsync,
+    input wire [7:0] character_id_in,
+    input wire we,
     input wire clk
     );
     
@@ -45,16 +47,23 @@ module System(
     wire [Y_BIT_LEN - 1:0] y;
     wire video_on;
     wire p_tick;
+    wire [CHAR_ID_LENGTH - 1:0] put_character_id;
+    wire [ROW_BIT_LEN - 1:0] put_row;
+    wire [COL_BIT_LEN - 1:0] put_col;
     wire [CHAR_ID_LENGTH - 1:0] show_chacracter_id;
     wire [ROW_BIT_LEN - 1:0] show_row;
     wire [COL_BIT_LEN - 1:0] show_col;
+    wire push_up;
+    wire reset;
     wire [3:0] red;
     wire [3:0] green;
     wire [3:0] blue;
     
     VGASync vga_sync(clk,0,Hsync,Vsync,video_on,p_tick,x,y);
-    CharacterPlane characerPlane(show_chacracter_id,show_row,show_col,0,0,0,0,0,0,clk);
+    CharacterPlane characerPlane(show_chacracter_id,show_row,show_col,put_character_id,put_row,put_col,we,reset,push_up,clk);
     PixelEncoder pixelEncoder(x,y,show_row,show_col,show_chacracter_id,red,green,blue,video_on);
+    CharacterFeeder characterFeeder(put_row,put_col,put_character_id,push_up,reset,we,clk);
+    CharacterIdEncoder characterIdEncoder(put_character_id,character_id_in,we,clk);
     
     always@(posedge clk) begin
         if (p_tick == 1) begin

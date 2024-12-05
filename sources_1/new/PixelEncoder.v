@@ -57,7 +57,7 @@ module PixelEncoder(
     localparam X_BIT_LEN = 10; // this is from vga
     localparam Y_BIT_LEN = 10; // this is from vga 
     
-    localparam TOTAL_CHAR = 129; // total number of character in the rom
+    localparam TOTAL_CHAR = 130; // total number of character in the rom
     
     localparam CHAR_ID_LENGTH = 8; // lenght of the character id
     localparam ZOOM_FACTER = 1; // interger, zoom facter. the more the bigger the character.

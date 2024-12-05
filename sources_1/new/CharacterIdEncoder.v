@@ -54,7 +54,7 @@ module CharacterIdEncoder(
                 character_id <= data_in - 128 + 62;
             end
             else begin
-                character_id <= 129;
+                character_id <= 128;
             end
         end
     end
