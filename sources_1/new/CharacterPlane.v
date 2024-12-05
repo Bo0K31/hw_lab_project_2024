@@ -81,7 +81,7 @@ module CharacterPlane(
         for(r=1;r<ROW_NUMBER;r=r+1) begin
             for (c=0;c<COL_NUMBER;c=c+1) begin
                 always@(posedge push_up) begin
-                    mem[{{COL_BIT_LEN{1'b0}},r - 1} * COL_NUMBER + c] <= mem[{{COL_BIT_LEN{1'b0}},r} * COL_NUMBER + c];
+                    mem[{{COL_BIT_LEN{1'b0}},r - 1} * COL_NUMBER + c] = mem[{{COL_BIT_LEN{1'b0}},r} * COL_NUMBER + c];
                 end
             end
         end
