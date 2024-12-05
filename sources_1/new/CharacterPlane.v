@@ -61,17 +61,20 @@ module CharacterPlane(
         for(r=0;r<ROW_NUMBER;r=r+1) begin
             for (c=0;c<COL_NUMBER;c=c+1) begin
                 initial begin
-                    mem[{{COL_BIT_LEN{1'b0}},r} * COL_NUMBER + c] = 0;
+                    mem[{{COL_BIT_LEN{1'b0}},r} * COL_NUMBER + c] <= 129;
                 end
             end
         end 
     endgenerate
     
+    genvar r1,c1;
     generate 
-        for(r=0;r<ROW_NUMBER;r=r+1) begin
-            for (c=0;c<COL_NUMBER;c=c+1) begin
-                always@(posedge reset) begin
-                    mem[{{COL_BIT_LEN{1'b0}},r} * COL_NUMBER + c] = 0;
+        for(r1=0;r1<ROW_NUMBER;r1=r1+1) begin
+            for (c1=0;c1<COL_NUMBER;c1=c1+1) begin
+                always@(posedge clock) begin
+                    if(reset == 1) begin
+                        mem[{{COL_BIT_LEN{1'b0}},r1} * COL_NUMBER + c1] <= 0;
+                    end;
                 end
             end
         end
@@ -80,8 +83,19 @@ module CharacterPlane(
     generate 
         for(r=1;r<ROW_NUMBER;r=r+1) begin
             for (c=0;c<COL_NUMBER;c=c+1) begin
-                always@(posedge push_up) begin
-                    mem[{{COL_BIT_LEN{1'b0}},r - 1} * COL_NUMBER + c] = mem[{{COL_BIT_LEN{1'b0}},r} * COL_NUMBER + c];
+                always@(posedge clock) begin
+                    if(we == 1 && push_up == 1) begin
+                        mem[{{COL_BIT_LEN{1'b0}},r - 1} * COL_NUMBER + c] <= mem[{{COL_BIT_LEN{1'b0}},r} * COL_NUMBER + c];
+                    end
+                end
+            end
+        end
+    endgenerate
+    generate 
+        for (c=1;c<COL_NUMBER;c=c+1) begin
+            always@(posedge clock) begin
+                if(we == 1 && push_up == 1) begin
+                    mem[{{COL_BIT_LEN{1'b0}},ROW_NUMBER - 1} * COL_NUMBER + c] <= 0;
                 end
             end
         end
@@ -93,8 +107,8 @@ module CharacterPlane(
     
     always@(posedge clock) begin
        if(we == 1 && reset == 0) begin
-            mem[{{COL_BIT_LEN{1'b0}},row_in} * COL_NUMBER + column_in] = data_in;
-        end
+            mem[{{COL_BIT_LEN{1'b0}},row_in} * COL_NUMBER + column_in] <= data_in;
+       end
     end
     
 endmodule

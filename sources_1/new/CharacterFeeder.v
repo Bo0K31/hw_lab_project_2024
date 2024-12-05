@@ -33,7 +33,7 @@ module CharacterFeeder(
     localparam ROW_NUMBER = 15; // number of lines
     localparam COL_NUMBER = 40; // number of character in each line
     
-    localparam TOTAL_CHAR_NUM = 100;
+    localparam TOTAL_CHAR_NUM = ROW_NUMBER * COL_NUMBER;
     
     localparam ROW_BIT_LEN = 4; // bit len of row(set this to upper(log_2(ROW_NUMBER)))
     localparam COL_BIT_LEN = 6; // bit len of col(set this to upper(log_2(COL_NUMBER))
@@ -70,7 +70,7 @@ module CharacterFeeder(
                 col_out = counter % COL_NUMBER;
                 counter = counter + 1;
                 if(counter == TOTAL_CHAR_NUM) begin
-                    counter = 0;
+                    counter = TOTAL_CHAR_NUM - COL_NUMBER;
                     push_up = 1;
                 end
             end

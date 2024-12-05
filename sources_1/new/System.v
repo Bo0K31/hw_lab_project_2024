@@ -26,10 +26,11 @@ module System(
     output reg [3:0] vgaBlue,
     output wire Hsync,
     output wire Vsync,
-    input wire [7:0] character_id_in,
-    input wire we,
     input wire clk
     );
+    
+    wire [7:0] character_id_in = 2;
+    wire we = 1;
     
     localparam ROW_NUMBER = 15; // number of lines
     localparam COL_NUMBER = 40; // number of character in each line

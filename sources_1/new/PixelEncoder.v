@@ -115,10 +115,10 @@ module PixelEncoder(
             shift_y / TOTAL_CHAR_HEIGHT < ROW_NUMBER && shift_x / TOTAL_CHAR_WIDTH < COL_NUMBER &&
             scale_x >= LEFT_PAD && scale_x <= H_DISPLAY / ZOOM_FACTER - RIGHT_PAD &&
             scale_y >= TOP_PAD && scale_y <= V_DISPLAY / ZOOM_FACTER - BOTTOM_PAD) begin
-                {red,green,blue} = mem[rom_address];
+                {red,green,blue} <= mem[rom_address];
             end
             else begin
-                {red,green,blue} = 12'b000000001111; // background
+                {red,green,blue} <= 12'b000000001111; // background
             end
         end
     end
