@@ -86,7 +86,7 @@ module PixelEncoder(
         (y_on_character - CHAR_TOP_PAD) * CHAR_WIDTH +
         (x_on_character - CHAR_LEFT_PAD);
     
-    (*rom_style = "block" *) reg [PIXEL_BIT_LEN - 1:0] mem [ROM_SIZE - 1:0];
+    (*rom_style = "block" *) reg [PIXEL_BIT_LEN - 1:0] mem [0:ROM_SIZE - 1];
     initial begin
         $readmemb("rom.mem", mem);
     end

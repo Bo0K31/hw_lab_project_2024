@@ -28,6 +28,7 @@ module CharacterPlane(
     row_in,
     column_in,
     we,
+    reset,
     clock
     );
     
@@ -48,21 +49,40 @@ module CharacterPlane(
     input wire [ROW_BIT_LEN - 1:0] row_in;
     input wire [COL_BIT_LEN - 1:0] column_in;
     input wire we;
+    input wire reset;
     input wire clock;
     
-    (*rom_style = "block" *) reg [DATA_SIZE - 1:0] mem [MEM_SIZE - 1:0];
-    initial begin
-        $readmemb("char_id_test.mem", mem);
-    end
+    reg [DATA_SIZE - 1:0] mem [0:MEM_SIZE - 1];
+    
+    genvar r,c;
+    generate 
+        for(r=0;r<ROW_NUMBER;r=r+1) begin
+            for (c=0;c<COL_NUMBER;c=c+1) begin
+                initial begin
+                    mem[{{COL_BIT_LEN{1'b0}},r} * COL_NUMBER + c] = 0;
+                end
+            end
+        end 
+    endgenerate
+    
+    generate 
+        for(r=0;r<ROW_NUMBER;r=r+1) begin
+            for (c=0;c<COL_NUMBER;c=c+1) begin
+                always@(posedge reset) begin
+                    mem[{{COL_BIT_LEN{1'b0}},r} * COL_NUMBER + c] = 0;
+                end
+            end
+        end
+    endgenerate
     
     always@(row_out or column_out) begin
         data_out <= mem[{{COL_BIT_LEN{1'b0}},row_out} * COL_NUMBER + column_out];
     end
     
     always@(posedge clock) begin
-        if(we == 1) begin
-            mem[{{COL_BIT_LEN{1'b0}},row_in} * COL_NUMBER + column_in] <= data_in;
+       if(we == 1 && reset == 0) begin
+            mem[{{COL_BIT_LEN{1'b0}},row_in} * COL_NUMBER + column_in] = data_in;
         end
-    end    
+    end
     
 endmodule
