@@ -53,7 +53,7 @@ module System(
     wire [3:0] blue;
     
     VGASync vga_sync(clk,0,Hsync,Vsync,video_on,p_tick,x,y);
-    CharacterPlane characerPlane(show_chacracter_id,show_row,show_col,0,0,0,0,clk);
+    CharacterPlane characerPlane(show_chacracter_id,show_row,show_col,0,0,0,0,0,0,clk);
     PixelEncoder pixelEncoder(x,y,show_row,show_col,show_chacracter_id,red,green,blue,video_on);
     
     always@(posedge clk) begin

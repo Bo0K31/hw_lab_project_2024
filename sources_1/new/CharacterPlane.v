@@ -29,6 +29,7 @@ module CharacterPlane(
     column_in,
     we,
     reset,
+    push_up,
     clock
     );
     
@@ -50,6 +51,7 @@ module CharacterPlane(
     input wire [COL_BIT_LEN - 1:0] column_in;
     input wire we;
     input wire reset;
+    input wire push_up;
     input wire clock;
     
     reg [DATA_SIZE - 1:0] mem [0:MEM_SIZE - 1];
@@ -70,6 +72,16 @@ module CharacterPlane(
             for (c=0;c<COL_NUMBER;c=c+1) begin
                 always@(posedge reset) begin
                     mem[{{COL_BIT_LEN{1'b0}},r} * COL_NUMBER + c] = 0;
+                end
+            end
+        end
+    endgenerate
+    
+    generate 
+        for(r=1;r<ROW_NUMBER;r=r+1) begin
+            for (c=0;c<COL_NUMBER;c=c+1) begin
+                always@(posedge push_up) begin
+                    mem[{{COL_BIT_LEN{1'b0}},r - 1} * COL_NUMBER + c] <= mem[{{COL_BIT_LEN{1'b0}},r} * COL_NUMBER + c];
                 end
             end
         end

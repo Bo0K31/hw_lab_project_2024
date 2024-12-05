@@ -32,12 +32,13 @@ module ChracterPlaneTest(
     reg reset;
     reg clock;
     reg we;
+    reg push_up;
     
     reg [3:0] a;
     reg [5:0] b;
     reg [7:0] c;
     
-    CharacterPlane characterPlane(character_id,row,column,_character_id,_row,_column,we,reset,clock);
+    CharacterPlane characterPlane(character_id,row,column,_character_id,_row,_column,we,reset,push_up,clock);
     
     assign row = a;
     assign column = b;
@@ -46,23 +47,21 @@ module ChracterPlaneTest(
     end
     
     initial begin
-        we = 0; _row = 0; _column = 0; reset = 0; clock = 0;
-        #10; we = 1; _row = 0; _column = 0; _character_id = 1;
+        we = 0; _row = 0; _column = 0; reset = 0; clock = 0;push_up = 0;
+        #10; we = 1; _row = 1; _column = 0; _character_id = 1;
         #1; clock = 1;
         #1; clock = 0;
-        #10; we = 1; _row = 0; _column = 1; _character_id = 2;
+        #10; we = 1; _row = 1; _column = 1; _character_id = 2;
         #1; clock = 1;
         #1; clock = 0;
-        #10; we = 1; _row = 0; _column = 2; _character_id = 3;
+        #10; we = 1; _row = 1; _column = 2; _character_id = 3;
         #1; clock = 1;
         #1; clock = 0;
-        #10; we = 1; _row = 0; _column = 3; _character_id = 4;
+        #10; we = 1; _row = 1; _column = 3; _character_id = 4;
         #1; clock = 1;
         #1; clock = 0;
-        #1; a = 0; b = 0;
-        
-        #10; reset = 1; we= 0;
-        
+        #1; push_up = 1;
+        #1; a = 0; b = 0;      
 #1; a = 0; b = 1;
 #1; a = 0; b = 2;
 #1; a = 0; b = 3;
