@@ -1,34 +1,14 @@
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 05.12.2024 13:39:53
-// Design Name: 
-// Module Name: CharacterFeeder
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
-
 
 module CharacterFeeder(
-    character_id_out,
-    character_id_in,
-    row_out,
-    col_out,
-    push_up,
-    reset_call,
+    ido,
+    idi,
+    r,
+    c,
+    s,
+    reset,
     we,
-    clock
+    clk
     );
     
     localparam ROW_NUMBER = 7; // number of lines
@@ -40,72 +20,72 @@ module CharacterFeeder(
     localparam COL_BIT_LEN = 6; // bit len of col(set this to upper(log_2(COL_NUMBER))
     localparam CHAR_ID_LEN = 8;
     
-    localparam COUNTER_LEN = ROW_BIT_LEN + COL_BIT_LEN;
+    localparam p_LEN = ROW_BIT_LEN + COL_BIT_LEN;
     
-    output reg [CHAR_ID_LEN - 1:0] character_id_out;
-    input wire [CHAR_ID_LEN - 1:0] character_id_in;
-    output reg [ROW_BIT_LEN - 1:0] row_out;
-    output reg [COL_BIT_LEN - 1:0] col_out;
-    output reg push_up;
-    output reg reset_call;
+    output reg [CHAR_ID_LEN - 1:0] ido;
+    input wire [CHAR_ID_LEN - 1:0] idi;
+    output reg [ROW_BIT_LEN - 1:0] r;
+    output reg [COL_BIT_LEN - 1:0] c;
+    output reg s;
+    output reg reset;
     input wire we;
-    input wire clock;
+    input wire clk;
     
-    reg [COUNTER_LEN - 1:0] counter;
+    reg [p_LEN - 1:0] p;
     
     initial begin
-        counter = 0;
-        character_id_out = 0;
-        push_up = 0;
-        row_out = 0;
-        col_out = 0;
-        reset_call = 0;
+        p = 0;
+        ido = 0;
+        s = 0;
+        r = 0;
+        c = 0;
+        reset = 0;
     end 
     
-    always@(posedge clock) begin
-        if(character_id_in >= 48 && character_id_in <= 57) begin
-            character_id_out <= character_id_in - 48 + 0;
+    always@(posedge clk) begin
+        if(idi >= 48 && idi <= 57) begin
+            ido <= idi - 48 + 0;
         end
-        else if(character_id_in >= 65 && character_id_in <= 90) begin
-            character_id_out <= character_id_in - 65 + 10;
+        else if(idi >= 65 && idi <= 90) begin
+            ido <= idi - 65 + 10;
         end
-        else if(character_id_in >= 97 && character_id_in <= 122) begin
-            character_id_out <= character_id_in - 97 + 36;
+        else if(idi >= 97 && idi <= 122) begin
+            ido <= idi - 97 + 36;
         end
-        else if(character_id_in >= 128 && character_id_in <= 195) begin
-            character_id_out <= character_id_in - 128 + 62;
+        else if(idi >= 128 && idi <= 195) begin
+            ido <= idi - 128 + 62;
         end
-        else if(character_id_in == 8'b11111111) begin
-            character_id_out <= 8'b11111111;
+        else if(idi == 8'b11111111) begin
+            ido <= 8'b11111111;
         end
         else begin
-            character_id_out <= 128;
+            ido <= 128;
         end
     
         if(we) begin
-            if(character_id_in == 8'b11111111) begin
-                counter = 0;
-                row_out = 0;
-                col_out = 0;
-                reset_call = 1;
+            if(idi == 8'b11111111) begin
+                p = 0;
+                r = 0;
+                c = 0;
+                reset = 1;
             end
             else begin
-                counter = counter + 1;
-                reset_call = 0;
-                row_out = counter / COL_NUMBER;
-                col_out = counter % COL_NUMBER;
-                if(counter == TOTAL_CHAR_NUM) begin
-                    counter = TOTAL_CHAR_NUM - COL_NUMBER;
-                    push_up = 1;
+                p = p + 1;
+                reset = 0;
+                r = p / COL_NUMBER;
+                c = p % COL_NUMBER;
+                if(p == TOTAL_CHAR_NUM) begin
+                    p = TOTAL_CHAR_NUM - COL_NUMBER;
+                    s = 1;
                 end
                 else begin
-                    push_up = 0;
+                    s = 0;
                 end
             end
         end
         else begin
-            reset_call = 0;
-            push_up = 0;
+            reset = 0;
+            s = 0;
         end
     end
 endmodule

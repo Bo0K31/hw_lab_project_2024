@@ -1,34 +1,14 @@
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date: 26.11.2024 20:32:21
-// Design Name: 
-// Module Name: PixelEncoder
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
-
 
 module PixelEncoder(
     x,
     y,
-    char_row,
-    char_col,
-    character_id,
-    red,
-    green,
-    blue,
+    rin,
+    cin,
+    charout,
+    r,
+    g,
+    b,
     e
     );
     
@@ -52,7 +32,7 @@ module PixelEncoder(
     localparam ROW_BIT_LEN = 4; // bit len of row(set this to upper(log_2(ROW_NUMBER)))
     localparam COL_BIT_LEN = 6; // bit len of col(set this to upper(log_2(COL_NUMBER))
     
-    localparam PIXEL_BIT_LEN = 12; // this is fixed for {red,green,blue}
+    localparam PIXEL_BIT_LEN = 12; // this is fixed for {r,g,b}
     
     localparam X_BIT_LEN = 10; // this is from vga
     localparam Y_BIT_LEN = 10; // this is from vga 
@@ -72,12 +52,12 @@ module PixelEncoder(
     
     input wire [X_BIT_LEN - 1:0] x;
     input wire [Y_BIT_LEN - 1:0] y;
-    output reg [ROW_BIT_LEN - 1:0] char_row;
-    output reg [COL_BIT_LEN - 1:0] char_col;
-    input wire [CHAR_ID_LENGTH - 1:0] character_id;
-    output reg [3:0] red;
-    output reg [3:0] green;
-    output reg [3:0] blue;
+    output reg [ROW_BIT_LEN - 1:0] rin;
+    output reg [COL_BIT_LEN - 1:0] cin;
+    input wire [CHAR_ID_LENGTH - 1:0] charout;
+    output reg [3:0] r;
+    output reg [3:0] g;
+    output reg [3:0] b;
     input wire e;
     
     wire [ROW_ADDR_BIT_LEN - 1:0] scale_x;
@@ -94,7 +74,7 @@ module PixelEncoder(
     assign shift_y = scale_y - TOP_PAD;
     assign x_on_character = shift_x % TOTAL_CHAR_WIDTH;
     assign y_on_character = shift_y % TOTAL_CHAR_HEIGHT;
-    assign rom_address = {{(ROW_ADDR_BIT_LEN - CHAR_ID_LENGTH){1'b0}},character_id} * CHAR_PIXELS + 
+    assign rom_address = {{(ROW_ADDR_BIT_LEN - CHAR_ID_LENGTH){1'b0}},charout} * CHAR_PIXELS + 
         (y_on_character - CHAR_TOP_PAD) * CHAR_WIDTH +
         (x_on_character - CHAR_LEFT_PAD);
     
@@ -104,8 +84,8 @@ module PixelEncoder(
     end
     
     always @(shift_x, shift_y) begin
-        char_row = shift_y / TOTAL_CHAR_HEIGHT;
-        char_col = shift_x / TOTAL_CHAR_WIDTH;    
+        rin = shift_y / TOTAL_CHAR_HEIGHT;
+        cin = shift_x / TOTAL_CHAR_WIDTH;    
     end
     
     always @(x_on_character, y_on_character, rom_address) begin
@@ -115,10 +95,10 @@ module PixelEncoder(
             shift_y / TOTAL_CHAR_HEIGHT < ROW_NUMBER && shift_x / TOTAL_CHAR_WIDTH < COL_NUMBER &&
             scale_x >= LEFT_PAD && scale_x <= H_DISPLAY / ZOOM_FACTER - RIGHT_PAD &&
             scale_y >= TOP_PAD && scale_y <= V_DISPLAY / ZOOM_FACTER - BOTTOM_PAD) begin
-                {red,green,blue} <= mem[rom_address];
+                {r,g,b} <= mem[rom_address];
             end
             else begin
-                {red,green,blue} <= 12'b000000001111; // background
+                {r,g,b} <= 12'b000000001111; // background
             end
         end
     end

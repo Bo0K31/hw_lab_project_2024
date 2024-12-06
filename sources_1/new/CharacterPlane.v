@@ -21,16 +21,16 @@
 
 
 module CharacterPlane(
-    data_out,
-    row_out,
-    column_out,
-    data_in,
-    row_in,
-    column_in,
+    dout,
+    rout,
+    cout,
+    din,
+    rin,
+    cin,
     we,
     reset,
-    push_up,
-    clock
+    s,
+    clk
     );
     
     localparam ROW_NUMBER = 7; // number of lines
@@ -43,82 +43,49 @@ module CharacterPlane(
     localparam MEM_SIZE = ROW_NUMBER * COL_NUMBER;
     localparam DATA_SIZE = CHAR_ID_LENGTH;
     
-    output reg [DATA_SIZE - 1:0] data_out;
-    input wire [ROW_BIT_LEN - 1:0] row_out;
-    input wire [COL_BIT_LEN - 1:0] column_out;
-    input wire [DATA_SIZE - 1:0] data_in;
-    input wire [ROW_BIT_LEN - 1:0] row_in;
-    input wire [COL_BIT_LEN - 1:0] column_in;
+    output reg [DATA_SIZE - 1:0] dout;
+    input wire [ROW_BIT_LEN - 1:0] rout;
+    input wire [COL_BIT_LEN - 1:0] cout;
+    input wire [DATA_SIZE - 1:0] din;
+    input wire [ROW_BIT_LEN - 1:0] rin;
+    input wire [COL_BIT_LEN - 1:0] cin;
     input wire we;
     input wire reset;
-    input wire push_up;
-    input wire clock;
+    input wire s;
+    input wire clk;
     
     reg [DATA_SIZE - 1:0] mem [0:MEM_SIZE - 1];
     
     initial begin
-        data_out = 129;
+        dout = 129;
     end
     
-    genvar r,c;
+    genvar i,j;
     generate 
-        for(r=0;r<ROW_NUMBER;r=r+1) begin
-            for (c=0;c<COL_NUMBER;c=c+1) begin
+        for(i=0;i<ROW_NUMBER;i=i+1) begin
+            for (j=0;j<COL_NUMBER;j=j+1) begin
                 initial begin
-                    mem[{{COL_BIT_LEN{1'b0}},r} * COL_NUMBER + c] = 129;
+                    mem[{{COL_BIT_LEN{1'b0}},i} * COL_NUMBER + j] = 129;
                 end
             end
         end 
     endgenerate
     
-//    generate 
-//        for(r=0;r<ROW_NUMBER;r=r+1) begin
-//            for (c=0;c<COL_NUMBER;c=c+1) begin
-//                always@(negedge clock) begin
-//                    if(reset == 1 && we == 1) begin
-//                        mem[{{COL_BIT_LEN{1'b0}},r} * COL_NUMBER + c] = 11;
-//                    end;
-//                end
-//            end
-//        end
-//    endgenerate
-    
-//    generate 
-//        for(r=1;r<ROW_NUMBER;r=r+1) begin
-//            for (c=0;c<COL_NUMBER;c=c+1) begin
-//                always@(negedge clock) begin
-//                    if(we == 1 && push_up == 1 && reset == 0) begin
-//                        mem[{{COL_BIT_LEN{1'b0}},r - 1} * COL_NUMBER + c] <= mem[{{COL_BIT_LEN{1'b0}},r} * COL_NUMBER + c];
-//                    end
-//                end
-//            end
-//        end
-//    endgenerate
-//    generate 
-//        for (c=1;c<COL_NUMBER;c=c+1) begin
-//            always@(negedge clock) begin
-//                if(we == 1 && push_up == 1 && reset == 0) begin
-//                    mem[{{COL_BIT_LEN{1'b0}},ROW_NUMBER - 1} * COL_NUMBER + c] <= 0;
-//                end
-//            end
-//        end
-//    endgenerate
-    
-    always@(row_out or column_out) begin
-        data_out <= mem[{{COL_BIT_LEN{1'b0}},row_out} * COL_NUMBER + column_out];
+    always@(rout or cout) begin
+        dout <= mem[{{COL_BIT_LEN{1'b0}},rout} * COL_NUMBER + cout];
     end
     
-    always@(negedge clock) begin
-       if(we == 1 && reset == 0 && push_up == 0) begin
-            if(data_in == 8'b11111111) begin
-                mem[{{COL_BIT_LEN{1'b0}},row_in} * COL_NUMBER + column_in] = 129;
+    always@(negedge clk) begin
+       if(we == 1 && reset == 0 && s == 0) begin
+            if(din == 8'b11111111) begin
+                mem[{{COL_BIT_LEN{1'b0}},rin} * COL_NUMBER + cin] = 129;
             end
             else begin
-                mem[{{COL_BIT_LEN{1'b0}},row_in} * COL_NUMBER + column_in] = data_in;
+                mem[{{COL_BIT_LEN{1'b0}},rin} * COL_NUMBER + cin] = din;
             end
        end
-       else if(we == 1 && reset == 0 && push_up == 1) begin
-            mem[{{COL_BIT_LEN{1'b0}},ROW_NUMBER - 1} * COL_NUMBER] = data_in;
+       else if(we == 1 && reset == 0 && s == 1) begin
+            mem[{{COL_BIT_LEN{1'b0}},ROW_NUMBER - 1} * COL_NUMBER] = din;
        end
     end
     
