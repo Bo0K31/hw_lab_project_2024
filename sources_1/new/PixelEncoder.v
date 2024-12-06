@@ -41,14 +41,12 @@ module PixelEncoder(
     
     always @(x_div, y_div) begin
         rin = y_div / 32;
-        cin = x_div / 16;    
+        cin = x_div / 16;
     end
     
     always @(xlocal, ylocal, addr) begin
         if(e) begin
-            if(xlocal >= 0 && xlocal < 16 && ylocal >= 0 && ylocal < 32 &&
-            y_div / 32 < 7 && x_div / 16 < 20 && x_div >= 0 && x_div <= 320 &&
-            y_div >= 0 && y_div <= 240) begin
+            if(xlocal >= 0 && xlocal < 16 && ylocal >= 0 && ylocal < 32 && y_div / 32 < 7 && x_div / 16 < 20 && x_div >= 0 && x_div <= 320 && y_div >= 0 && y_div <= 240) begin
                 {r,g,b} <= mem[addr];
             end
             else begin

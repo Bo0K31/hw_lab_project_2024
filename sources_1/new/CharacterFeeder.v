@@ -24,12 +24,12 @@ module CharacterFeeder(
     reg [9:0] p;
     
     initial begin
+        reset = 0;
+        s = 0;
         p = 0;
         ido = 0;
-        s = 0;
-        r = 0;
         c = 0;
-        reset = 0;
+        r = 0;
     end 
     
     always@(posedge clk) begin
@@ -54,16 +54,16 @@ module CharacterFeeder(
     
         if(we) begin
             if(idi == 8'b11111111) begin
-                p = 0;
+                reset = 1;
                 r = 0;
                 c = 0;
-                reset = 1;
+                p = 0;
             end
             else begin
                 p = p + 1;
-                reset = 0;
                 r = p / 20;
                 c = p % 20;
+                reset = 0;
                 if(p == 140) begin
                     p = 0;
                     s = 1;
