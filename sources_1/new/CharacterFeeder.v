@@ -11,27 +11,17 @@ module CharacterFeeder(
     clk
     );
     
-    localparam ROW_NUMBER = 7; // number of lines
-    localparam COL_NUMBER = 20; // number of character in each line
     
-    localparam TOTAL_CHAR_NUM = ROW_NUMBER * COL_NUMBER;
-    
-    localparam ROW_BIT_LEN = 4; // bit len of row(set this to upper(log_2(ROW_NUMBER)))
-    localparam COL_BIT_LEN = 6; // bit len of col(set this to upper(log_2(COL_NUMBER))
-    localparam CHAR_ID_LEN = 8;
-    
-    localparam p_LEN = ROW_BIT_LEN + COL_BIT_LEN;
-    
-    output reg [CHAR_ID_LEN - 1:0] ido;
-    input wire [CHAR_ID_LEN - 1:0] idi;
-    output reg [ROW_BIT_LEN - 1:0] r;
-    output reg [COL_BIT_LEN - 1:0] c;
+    output reg [7:0] ido;
+    input wire [7:0] idi;
+    output reg [3:0] r;
+    output reg [5:0] c;
     output reg s;
     output reg reset;
     input wire we;
     input wire clk;
     
-    reg [p_LEN - 1:0] p;
+    reg [10 - 1:0] p;
     
     initial begin
         p = 0;
@@ -72,10 +62,10 @@ module CharacterFeeder(
             else begin
                 p = p + 1;
                 reset = 0;
-                r = p / COL_NUMBER;
-                c = p % COL_NUMBER;
-                if(p == TOTAL_CHAR_NUM) begin
-                    p = TOTAL_CHAR_NUM - COL_NUMBER;
+                r = p / 20;
+                c = p % 20;
+                if(p == 140) begin
+                    p = 140 - 20;
                     s = 1;
                 end
                 else begin

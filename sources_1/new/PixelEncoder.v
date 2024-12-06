@@ -12,93 +12,55 @@ module PixelEncoder(
     e
     );
     
-    localparam H_DISPLAY = 640;
-    localparam V_DISPLAY = 480;
-    
-    localparam LEFT_PAD = 0;
-    localparam RIGHT_PAD = 0;
-    localparam TOP_PAD = 0;
-    localparam BOTTOM_PAD = 0;
-    
-    localparam CHAR_HEIGHT = 32; // height of the character
-    localparam CHAR_WIDTH = 16; // width of the cahracter
-    localparam CHAR_LEFT_PAD = 0; // space on the left side of the character
-    localparam CHAR_RIGHT_PAD = 0; // space on the right side of the character
-    localparam CHAR_TOP_PAD = 0; // space on the top side of the character
-    localparam CHAR_BOTTOM_PAD = 0; // space at the bottom side of the character
-    
-    localparam ROW_NUMBER = 7; // number of lines
-    localparam COL_NUMBER = 20; // number of character in each line
-    localparam ROW_BIT_LEN = 4; // bit len of row(set this to upper(log_2(ROW_NUMBER)))
-    localparam COL_BIT_LEN = 6; // bit len of col(set this to upper(log_2(COL_NUMBER))
-    
-    localparam PIXEL_BIT_LEN = 12; // this is fixed for {r,g,b}
-    
-    localparam X_BIT_LEN = 10; // this is from vga
-    localparam Y_BIT_LEN = 10; // this is from vga 
-    
-    localparam TOTAL_CHAR = 130; // total number of character in the rom
-    
-    localparam CHAR_ID_LENGTH = 8; // lenght of the character id
-    localparam ZOOM_FACTER = 2; // interger, zoom facter. the more the bigger the character.
-    
-    localparam TOTAL_CHAR_HEIGHT = CHAR_HEIGHT + CHAR_TOP_PAD + CHAR_BOTTOM_PAD;
-    localparam TOTAL_CHAR_WIDTH = CHAR_WIDTH + CHAR_LEFT_PAD + CHAR_RIGHT_PAD;
-    
-    localparam CHAR_PIXELS = CHAR_HEIGHT * CHAR_WIDTH;
-    
-    localparam ROM_SIZE = TOTAL_CHAR * CHAR_PIXELS;
-    localparam ROW_ADDR_BIT_LEN = 17; // set this number to cover ROW_SIZE(upper(log_2(ROW_SIZE)))
-    
-    input wire [X_BIT_LEN - 1:0] x;
-    input wire [Y_BIT_LEN - 1:0] y;
-    output reg [ROW_BIT_LEN - 1:0] rin;
-    output reg [COL_BIT_LEN - 1:0] cin;
-    input wire [CHAR_ID_LENGTH - 1:0] charout;
+    input wire [9:0] x;
+    input wire [9:0] y;
+    output reg [3:0] rin;
+    output reg [5:0] cin;
+    input wire [7:0] charout;
     output reg [3:0] r;
     output reg [3:0] g;
     output reg [3:0] b;
     input wire e;
     
-    wire [ROW_ADDR_BIT_LEN - 1:0] scale_x;
-    wire [ROW_ADDR_BIT_LEN - 1:0] scale_y;
-    wire [ROW_ADDR_BIT_LEN - 1:0] shift_x;
-    wire [ROW_ADDR_BIT_LEN - 1:0] shift_y;
-    wire [ROW_ADDR_BIT_LEN - 1:0] x_on_character; // x position on the character
-    wire [ROW_ADDR_BIT_LEN - 1:0] y_on_character; // y position on the character
-    wire [ROW_ADDR_BIT_LEN - 1:0] rom_address;
+    wire [16:0] scale_x;
+    wire [16:0] scale_y;
+    wire [16:0] shift_x;
+    wire [16:0] shift_y;
+    wire [16:0] x_on_character; 
+    wire [16:0] y_on_character;
+    wire [16:0] rom_address;
     
-    assign scale_x = x / ZOOM_FACTER;
-    assign scale_y = y / ZOOM_FACTER;
-    assign shift_x = scale_x - LEFT_PAD;
-    assign shift_y = scale_y - TOP_PAD;
-    assign x_on_character = shift_x % TOTAL_CHAR_WIDTH;
-    assign y_on_character = shift_y % TOTAL_CHAR_HEIGHT;
-    assign rom_address = {{(ROW_ADDR_BIT_LEN - CHAR_ID_LENGTH){1'b0}},charout} * CHAR_PIXELS + 
-        (y_on_character - CHAR_TOP_PAD) * CHAR_WIDTH +
-        (x_on_character - CHAR_LEFT_PAD);
+    assign scale_x = x / 2;
+    assign scale_y = y / 2;
+    assign shift_x = scale_x - 0;
+    assign shift_y = scale_y - 0;
+    assign x_on_character = shift_x % 16;
+    assign y_on_character = shift_y % 32;
+    assign rom_address = {{(17 - 8){1'b0}},charout} * 512 + 
+        (y_on_character - 0) * 16 +
+        (x_on_character - 0);
     
-    (*rom_style = "block" *) reg [PIXEL_BIT_LEN - 1:0] mem [0:ROM_SIZE - 1];
+    (*rom_style = "block" *) reg [11:0] mem [0:66559];
     initial begin
         $readmemb("rom.mem", mem);
     end
     
     always @(shift_x, shift_y) begin
-        rin = shift_y / TOTAL_CHAR_HEIGHT;
-        cin = shift_x / TOTAL_CHAR_WIDTH;    
+        rin = shift_y / 32;
+        cin = shift_x / 16;    
     end
     
     always @(x_on_character, y_on_character, rom_address) begin
         if(e) begin
-            if(x_on_character >= CHAR_LEFT_PAD && x_on_character < (CHAR_LEFT_PAD + CHAR_WIDTH) &&
-            y_on_character >= CHAR_TOP_PAD && y_on_character < (CHAR_TOP_PAD + CHAR_HEIGHT) &&
-            shift_y / TOTAL_CHAR_HEIGHT < ROW_NUMBER && shift_x / TOTAL_CHAR_WIDTH < COL_NUMBER &&
-            scale_x >= LEFT_PAD && scale_x <= H_DISPLAY / ZOOM_FACTER - RIGHT_PAD &&
-            scale_y >= TOP_PAD && scale_y <= V_DISPLAY / ZOOM_FACTER - BOTTOM_PAD) begin
+            if(x_on_character >= 0 && x_on_character < (0 + 16) &&
+            y_on_character >= 0 && y_on_character < (0 + 32) &&
+            shift_y / 32 < 7 && shift_x / 16 < 20 &&
+            scale_x >= 0 && scale_x <= 640 / 2 - 0 &&
+            scale_y >= 0 && scale_y <= 480 / 2 - 0) begin
                 {r,g,b} <= mem[rom_address];
             end
             else begin
-                {r,g,b} <= 12'b000000001111; // background
+                {r,g,b} <= 12'b000000001111;
             end
         end
     end

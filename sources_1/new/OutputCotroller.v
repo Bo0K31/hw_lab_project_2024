@@ -11,28 +11,17 @@ module OutputController(
     input wire clk
     );
     
-    localparam ROW_NUMBER = 7; // number of lines
-    localparam COL_NUMBER = 20; // number of character in each line
-    localparam CHAR_ID_LENGTH = 8; // lenght of the character id
     
-    localparam ROW_BIT_LEN = 4; // bit len of row(set this to upper(log_2(ROW_NUMBER)))
-    localparam COL_BIT_LEN = 6; // bit len of col(set this to upper(log_2(COL_NUMBER))
-    
-    localparam PIXEL_BIT_LEN = 12; // this is fixed for {r,g,b}
-    
-    localparam X_BIT_LEN = 10; // this is from vga
-    localparam Y_BIT_LEN = 10; // this is from vga 
-    
-    wire [X_BIT_LEN - 1:0] x;
-    wire [Y_BIT_LEN - 1:0] y;
+    wire [9:0] x;
+    wire [9:0] y;
     wire video_on;
     wire p_tick;
-    wire [CHAR_ID_LENGTH - 1:0] c_feedpane;
-    wire [ROW_BIT_LEN - 1:0] r_feedpane;
-    wire [COL_BIT_LEN - 1:0] c_feedpane;
-    wire [CHAR_ID_LENGTH - 1:0] c_paneencoder;
-    wire [ROW_BIT_LEN - 1:0] r_paneencoder;
-    wire [COL_BIT_LEN - 1:0] c_paneencoder;
+    wire [7:0] c_feedpane;
+    wire [3:0] r_feedpane;
+    wire [5:0] c_feedpane;
+    wire [7:0] c_paneencoder;
+    wire [3:0] r_paneencoder;
+    wire [5:0] c_paneencoder;
     wire s;
     wire reset;
     wire [3:0] r;
