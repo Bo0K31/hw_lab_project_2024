@@ -1,9 +1,9 @@
 `timescale 1ns / 1ps
 
 module OutputController(
-    output reg [3:0] vgar,
-    output reg [3:0] vgag,
-    output reg [3:0] vgab,
+    output reg [3:0] vgaRed,
+    output reg [3:0] vgaGreen,
+    output reg [3:0] vgaBlue,
     output wire Hsync,
     output wire Vsync,
     input wire [7:0] cin,
@@ -11,8 +11,8 @@ module OutputController(
     input wire clk
     );
     
-    localparam ROW_NUMBER = 15; // number of lines
-    localparam COL_NUMBER = 40; // number of character in each line
+    localparam ROW_NUMBER = 7; // number of lines
+    localparam COL_NUMBER = 20; // number of character in each line
     localparam CHAR_ID_LENGTH = 8; // lenght of the character id
     
     localparam ROW_BIT_LEN = 4; // bit len of row(set this to upper(log_2(ROW_NUMBER)))
@@ -47,14 +47,14 @@ module OutputController(
     always@(posedge clk) begin
         if (p_tick == 1) begin
             if(video_on) begin
-                vgar <= r;
-                vgag <= g;
-                vgab <= b;
+                vgaRed <= r;
+                vgaGreen <= g;
+                vgaBlue <= b;
             end
             else begin
-                vgar <= 0;
-                vgag <= 0;
-                vgab <= 0;
+                vgaRed <= 0;
+                vgaGreen <= 0;
+                vgaBlue <= 0;
             end
         end
     end
