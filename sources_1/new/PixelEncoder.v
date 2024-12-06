@@ -3,13 +3,13 @@
 module PixelEncoder(
     input wire [9:0] x,
     input wire [9:0] y,
+    input wire [7:0] charout,
+    input wire e,
     output reg [3:0] rin,
     output reg [5:0] cin,
-    input wire [7:0] charout,
     output reg [3:0] r,
     output reg [3:0] g,
-    output reg [3:0] b,
-    input wire e
+    output reg [3:0] b
     );
 
     wire [16:0] xlocal; 

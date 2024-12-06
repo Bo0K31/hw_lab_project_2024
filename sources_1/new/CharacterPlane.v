@@ -1,16 +1,16 @@
 `timescale 1ns / 1ps
 
 module CharacterPlane(
-    output reg [7:0] dout,
-    input wire [3:0] rout,
     input wire [5:0] cout,
+    input wire [3:0] rout,
     input wire [7:0] din,
-    input wire [3:0] rin,
     input wire [5:0] cin,
+    input wire [3:0] rin,
     input wire we,
     input wire reset,
     input wire s,
-    input wire clk
+    input wire clk,
+    output reg [7:0] dout
     );
 
     reg [7:0] mem [0:139];

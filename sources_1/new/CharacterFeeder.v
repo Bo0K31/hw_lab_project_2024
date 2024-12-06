@@ -1,14 +1,14 @@
 `timescale 1ns / 1ps
 
 module CharacterFeeder(
-    output reg [7:0] ido,
     input wire [7:0] idi,
-    output reg [3:0] r,
-    output reg [5:0] c,
-    output reg s,
-    output reg reset,
     input wire we,
-    input wire clk
+    input wire clk,
+    output reg [7:0] ido,
+    output reg [5:0] c,
+    output reg [3:0] r,
+    output reg s,
+    output reg reset
     );
     
     reg [9:0] p;
