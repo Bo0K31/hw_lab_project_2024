@@ -31,8 +31,8 @@ module CharacterFeeder(
     clock
     );
     
-    localparam ROW_NUMBER = 15; // number of lines
-    localparam COL_NUMBER = 40; // number of character in each line
+    localparam ROW_NUMBER = 7; // number of lines
+    localparam COL_NUMBER = 20; // number of character in each line
     
     localparam TOTAL_CHAR_NUM = ROW_NUMBER * COL_NUMBER;
     

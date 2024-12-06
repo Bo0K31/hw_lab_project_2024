@@ -47,8 +47,8 @@ module PixelEncoder(
     localparam CHAR_TOP_PAD = 0; // space on the top side of the character
     localparam CHAR_BOTTOM_PAD = 0; // space at the bottom side of the character
     
-    localparam ROW_NUMBER = 15; // number of lines
-    localparam COL_NUMBER = 40; // number of character in each line
+    localparam ROW_NUMBER = 7; // number of lines
+    localparam COL_NUMBER = 20; // number of character in each line
     localparam ROW_BIT_LEN = 4; // bit len of row(set this to upper(log_2(ROW_NUMBER)))
     localparam COL_BIT_LEN = 6; // bit len of col(set this to upper(log_2(COL_NUMBER))
     
@@ -60,7 +60,7 @@ module PixelEncoder(
     localparam TOTAL_CHAR = 130; // total number of character in the rom
     
     localparam CHAR_ID_LENGTH = 8; // lenght of the character id
-    localparam ZOOM_FACTER = 1; // interger, zoom facter. the more the bigger the character.
+    localparam ZOOM_FACTER = 2; // interger, zoom facter. the more the bigger the character.
     
     localparam TOTAL_CHAR_HEIGHT = CHAR_HEIGHT + CHAR_TOP_PAD + CHAR_BOTTOM_PAD;
     localparam TOTAL_CHAR_WIDTH = CHAR_WIDTH + CHAR_LEFT_PAD + CHAR_RIGHT_PAD;
