@@ -20,17 +20,16 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module System(
+module OutputController(
     output reg [3:0] vgaRed,
     output reg [3:0] vgaGreen,
     output reg [3:0] vgaBlue,
     output wire Hsync,
     output wire Vsync,
+    input wire [7:0] character_id_in,
+    input wire we,
     input wire clk
     );
-    
-    wire [7:0] character_id_in = 2;
-    wire we = 1;
     
     localparam ROW_NUMBER = 15; // number of lines
     localparam COL_NUMBER = 40; // number of character in each line
@@ -63,8 +62,7 @@ module System(
     VGASync vga_sync(clk,0,Hsync,Vsync,video_on,p_tick,x,y);
     CharacterPlane characerPlane(show_chacracter_id,show_row,show_col,put_character_id,put_row,put_col,we,reset,push_up,clk);
     PixelEncoder pixelEncoder(x,y,show_row,show_col,show_chacracter_id,red,green,blue,video_on);
-    CharacterFeeder characterFeeder(put_row,put_col,put_character_id,push_up,reset,we,clk);
-    CharacterIdEncoder characterIdEncoder(put_character_id,character_id_in,we,clk);
+    CharacterFeeder characterFeeder(put_character_id,character_id_in,put_row,put_col,push_up,reset,we,clk);
     
     always@(posedge clk) begin
         if (p_tick == 1) begin

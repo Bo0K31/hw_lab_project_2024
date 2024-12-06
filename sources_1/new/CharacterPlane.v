@@ -56,58 +56,69 @@ module CharacterPlane(
     
     reg [DATA_SIZE - 1:0] mem [0:MEM_SIZE - 1];
     
+    initial begin
+        data_out = 129;
+    end
+    
     genvar r,c;
     generate 
         for(r=0;r<ROW_NUMBER;r=r+1) begin
             for (c=0;c<COL_NUMBER;c=c+1) begin
                 initial begin
-                    mem[{{COL_BIT_LEN{1'b0}},r} * COL_NUMBER + c] <= 129;
+                    mem[{{COL_BIT_LEN{1'b0}},r} * COL_NUMBER + c] = 129;
                 end
             end
         end 
     endgenerate
     
-    genvar r1,c1;
-    generate 
-        for(r1=0;r1<ROW_NUMBER;r1=r1+1) begin
-            for (c1=0;c1<COL_NUMBER;c1=c1+1) begin
-                always@(negedge clock) begin
-                    if(reset == 1) begin
-                        mem[{{COL_BIT_LEN{1'b0}},r1} * COL_NUMBER + c1] <= 0;
-                    end;
-                end
-            end
-        end
-    endgenerate
+//    generate 
+//        for(r=0;r<ROW_NUMBER;r=r+1) begin
+//            for (c=0;c<COL_NUMBER;c=c+1) begin
+//                always@(negedge clock) begin
+//                    if(reset == 1 && we == 1) begin
+//                        mem[{{COL_BIT_LEN{1'b0}},r} * COL_NUMBER + c] = 11;
+//                    end;
+//                end
+//            end
+//        end
+//    endgenerate
     
-    generate 
-        for(r=1;r<ROW_NUMBER;r=r+1) begin
-            for (c=0;c<COL_NUMBER;c=c+1) begin
-                always@(negedge clock) begin
-                    if(we == 1 && push_up == 1) begin
-                        mem[{{COL_BIT_LEN{1'b0}},r - 1} * COL_NUMBER + c] <= mem[{{COL_BIT_LEN{1'b0}},r} * COL_NUMBER + c];
-                    end
-                end
-            end
-        end
-    endgenerate
-    generate 
-        for (c=1;c<COL_NUMBER;c=c+1) begin
-            always@(negedge clock) begin
-                if(we == 1 && push_up == 1) begin
-                    mem[{{COL_BIT_LEN{1'b0}},ROW_NUMBER - 1} * COL_NUMBER + c] <= 0;
-                end
-            end
-        end
-    endgenerate
+//    generate 
+//        for(r=1;r<ROW_NUMBER;r=r+1) begin
+//            for (c=0;c<COL_NUMBER;c=c+1) begin
+//                always@(negedge clock) begin
+//                    if(we == 1 && push_up == 1 && reset == 0) begin
+//                        mem[{{COL_BIT_LEN{1'b0}},r - 1} * COL_NUMBER + c] <= mem[{{COL_BIT_LEN{1'b0}},r} * COL_NUMBER + c];
+//                    end
+//                end
+//            end
+//        end
+//    endgenerate
+//    generate 
+//        for (c=1;c<COL_NUMBER;c=c+1) begin
+//            always@(negedge clock) begin
+//                if(we == 1 && push_up == 1 && reset == 0) begin
+//                    mem[{{COL_BIT_LEN{1'b0}},ROW_NUMBER - 1} * COL_NUMBER + c] <= 0;
+//                end
+//            end
+//        end
+//    endgenerate
     
     always@(row_out or column_out) begin
         data_out <= mem[{{COL_BIT_LEN{1'b0}},row_out} * COL_NUMBER + column_out];
     end
     
     always@(negedge clock) begin
-       if(we == 1 && reset == 0) begin
-            mem[{{COL_BIT_LEN{1'b0}},row_in} * COL_NUMBER + column_in] <= data_in;
+       if(we == 1 && reset == 0 && push_up == 0) begin
+            if(data_in == 8'b11111111) begin
+                mem[{{COL_BIT_LEN{1'b0}},row_in} * COL_NUMBER + column_in] = 129;
+            end
+            else begin
+                mem[{{COL_BIT_LEN{1'b0}},row_in} * COL_NUMBER + column_in] = data_in;
+            end
+       end
+       else if(we == 1 && reset == 0 && push_up == 1) begin
+            mem[{{COL_BIT_LEN{1'b0}},ROW_NUMBER - 1} * COL_NUMBER] = data_in;
        end
     end
     

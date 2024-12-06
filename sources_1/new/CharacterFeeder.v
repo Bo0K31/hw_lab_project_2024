@@ -21,9 +21,10 @@
 
 
 module CharacterFeeder(
+    character_id_out,
+    character_id_in,
     row_out,
     col_out,
-    character_id,
     push_up,
     reset_call,
     we,
@@ -41,9 +42,10 @@ module CharacterFeeder(
     
     localparam COUNTER_LEN = ROW_BIT_LEN + COL_BIT_LEN;
     
+    output reg [CHAR_ID_LEN - 1:0] character_id_out;
+    input wire [CHAR_ID_LEN - 1:0] character_id_in;
     output reg [ROW_BIT_LEN - 1:0] row_out;
     output reg [COL_BIT_LEN - 1:0] col_out;
-    input wire [CHAR_ID_LEN - 1:0] character_id;
     output reg push_up;
     output reg reset_call;
     input wire we;
@@ -53,27 +55,57 @@ module CharacterFeeder(
     
     initial begin
         counter = 0;
+        character_id_out = 0;
+        push_up = 0;
+        row_out = 0;
+        col_out = 0;
+        reset_call = 0;
     end 
     
     always@(posedge clock) begin
-        reset_call = 0;
-        push_up = 0;
+        if(character_id_in >= 48 && character_id_in <= 57) begin
+            character_id_out <= character_id_in - 48 + 0;
+        end
+        else if(character_id_in >= 65 && character_id_in <= 90) begin
+            character_id_out <= character_id_in - 65 + 10;
+        end
+        else if(character_id_in >= 97 && character_id_in <= 122) begin
+            character_id_out <= character_id_in - 97 + 36;
+        end
+        else if(character_id_in >= 128 && character_id_in <= 195) begin
+            character_id_out <= character_id_in - 128 + 62;
+        end
+        else if(character_id_in == 8'b11111111) begin
+            character_id_out <= 8'b11111111;
+        end
+        else begin
+            character_id_out <= 128;
+        end
+    
         if(we) begin
-            if(character_id == 8'b11111111) begin
-                reset_call = 1;
+            if(character_id_in == 8'b11111111) begin
                 counter = 0;
                 row_out = 0;
                 col_out = 0;
+                reset_call = 1;
             end
             else begin
+                counter = counter + 1;
+                reset_call = 0;
                 row_out = counter / COL_NUMBER;
                 col_out = counter % COL_NUMBER;
-                counter = counter + 1;
                 if(counter == TOTAL_CHAR_NUM) begin
                     counter = TOTAL_CHAR_NUM - COL_NUMBER;
                     push_up = 1;
                 end
+                else begin
+                    push_up = 0;
+                end
             end
+        end
+        else begin
+            reset_call = 0;
+            push_up = 0;
         end
     end
 endmodule
