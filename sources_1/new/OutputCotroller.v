@@ -16,10 +16,10 @@ module OutputController(
     wire [9:0] y;
     wire video_on;
     wire p_tick;
-    wire [7:0] c_feedpane;
+    wire [7:0] char_feedpane;
     wire [3:0] r_feedpane;
     wire [5:0] c_feedpane;
-    wire [7:0] c_paneencoder;
+    wire [7:0] char_paneencoder;
     wire [3:0] r_paneencoder;
     wire [5:0] c_paneencoder;
     wire s;
@@ -29,9 +29,9 @@ module OutputController(
     wire [3:0] b;
     
     VGASync vga_sync(clk,0,Hsync,Vsync,video_on,p_tick,x,y);
-    CharacterPlane characerPlane(c_paneencoder,r_paneencoder,c_paneencoder,c_feedpane,r_feedpane,c_feedpane,we,reset,s,clk);
-    PixelEncoder pixelEncoder(x,y,r_paneencoder,c_paneencoder,c_paneencoder,r,g,b,video_on);
-    CharacterFeeder characterFeeder(c_feedpane,cin,r_feedpane,c_feedpane,s,reset,we,clk);
+    CharacterPlane characerPlane(char_paneencoder,r_paneencoder,c_paneencoder,char_feedpane,r_feedpane,c_feedpane,we,reset,s,clk);
+    PixelEncoder pixelEncoder(x,y,r_paneencoder,c_paneencoder,char_paneencoder,r,g,b,video_on);
+    CharacterFeeder characterFeeder(char_feedpane,cin,r_feedpane,c_feedpane,s,reset,we,clk);
     
     always@(posedge clk) begin
         if (p_tick == 1) begin
