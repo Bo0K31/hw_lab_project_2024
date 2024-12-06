@@ -21,7 +21,7 @@ module CharacterFeeder(
     input wire we;
     input wire clk;
     
-    reg [10 - 1:0] p;
+    reg [9:0] p;
     
     initial begin
         p = 0;
@@ -34,16 +34,16 @@ module CharacterFeeder(
     
     always@(posedge clk) begin
         if(idi >= 48 && idi <= 57) begin
-            ido <= idi - 48 + 0;
+            ido <= idi - 48;
         end
         else if(idi >= 65 && idi <= 90) begin
-            ido <= idi - 65 + 10;
+            ido <= idi - 55;
         end
         else if(idi >= 97 && idi <= 122) begin
-            ido <= idi - 97 + 36;
+            ido <= idi - 61;
         end
         else if(idi >= 128 && idi <= 195) begin
-            ido <= idi - 128 + 62;
+            ido <= idi - 66;
         end
         else if(idi == 8'b11111111) begin
             ido <= 8'b11111111;
