@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module CharacterPlane(
+module RAM(
     input wire [5:0] cout,
     input wire [3:0] rout,
     input wire [7:0] din,

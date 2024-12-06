@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module CharacterFeeder(
+module CharController(
     input wire [7:0] idi,
     input wire we,
     input wire clk,
@@ -23,25 +23,6 @@ module CharacterFeeder(
     end 
     
     always@(posedge clk) begin
-        if(idi >= 48 && idi <= 57) begin
-            ido <= idi - 48;
-        end
-        else if(idi >= 65 && idi <= 90) begin
-            ido <= idi - 55;
-        end
-        else if(idi >= 97 && idi <= 122) begin
-            ido <= idi - 61;
-        end
-        else if(idi >= 128 && idi <= 195) begin
-            ido <= idi - 66;
-        end
-        else if(idi == 8'b11111111) begin
-            ido <= 8'b11111111;
-        end
-        else begin
-            ido <= 128;
-        end
-    
         if(we) begin
             if(idi == 8'b11111111) begin
                 reset = 1;
@@ -66,6 +47,25 @@ module CharacterFeeder(
         else begin
             s = 0;
             reset = 0;
+        end
+
+        if(idi >= 48 && idi <= 57) begin
+            ido <= idi - 48;
+        end
+        else if(idi >= 65 && idi <= 90) begin
+            ido <= idi - 55;
+        end
+        else if(idi >= 97 && idi <= 122) begin
+            ido <= idi - 61;
+        end
+        else if(idi >= 128 && idi <= 195) begin
+            ido <= idi - 66;
+        end
+        else if(idi == 8'b11111111) begin
+            ido <= 8'b11111111;
+        end
+        else begin
+            ido <= 128;
         end
     end
 endmodule

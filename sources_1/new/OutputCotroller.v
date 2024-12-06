@@ -28,9 +28,9 @@ module OutputController(
     wire [9:0] y;
     
     VGASync vga_sync(clk,0,Hsync,Vsync,video_on,p_tick,x,y);
-    CharacterPlane characerPlane(c_paneencoder,r_paneencoder,char_feedpane,c_feedpane,r_feedpane,we,reset,s,clk,char_paneencoder);
-    PixelEncoder pixelEncoder(x,y,char_paneencoder,video_on,r_paneencoder,c_paneencoder,r,g,b);
-    CharacterFeeder characterFeeder(cin,we,clk,char_feedpane,c_feedpane,r_feedpane,s,reset);
+    RAM ram(c_paneencoder,r_paneencoder,char_feedpane,c_feedpane,r_feedpane,we,reset,s,clk,char_paneencoder);
+    MapPixel mapPixel(x,y,char_paneencoder,video_on,r_paneencoder,c_paneencoder,r,g,b);
+    CharController charController(cin,we,clk,char_feedpane,c_feedpane,r_feedpane,s,reset);
     
     always@(posedge clk) begin
         if (p_tick == 1) begin

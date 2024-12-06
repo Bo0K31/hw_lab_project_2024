@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module PixelEncoder(
+module MapPixel(
     input wire [9:0] x,
     input wire [9:0] y,
     input wire [7:0] charout,
