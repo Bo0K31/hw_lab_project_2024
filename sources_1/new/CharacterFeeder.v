@@ -65,7 +65,7 @@ module CharacterFeeder(
                 r = p / 20;
                 c = p % 20;
                 if(p == 140) begin
-                    p = 140 - 20;
+                    p = 0;
                     s = 1;
                 end
                 else begin
