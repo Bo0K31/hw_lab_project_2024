@@ -20,7 +20,7 @@ module CharController(
         ido = 0;
         c = 0;
         r = 0;
-    end 
+    end
     
     always@(posedge clk) begin
         if(we) begin
